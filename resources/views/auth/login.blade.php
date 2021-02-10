@@ -19,7 +19,7 @@
                         </label>
 
                         <input id="email" type="email"
-                            class="form-input w-full @error('email') border-red-500 @enderror" name="email"
+                            class="form-input w-full border border-gray-500 @error('email') border-red-500 @enderror" name="email"
                             value="{{ old('email') }}" required autocomplete="email" autofocus>
 
                         @error('email')
@@ -35,7 +35,7 @@
                         </label>
 
                         <input id="password" type="password"
-                            class="form-input w-full @error('password') border-red-500 @enderror" name="password"
+                            class="form-input w-full border border-gray-500 @error('password') border-red-500 @enderror" name="password"
                             required>
 
                         @error('password')
@@ -47,7 +47,7 @@
 
                     <div class="flex items-center">
                         <label class="inline-flex items-center text-sm text-gray-700" for="remember">
-                            <input type="checkbox" name="remember" id="remember" class="form-checkbox"
+                            <input type="checkbox" name="remember" id="remember" class="form-checkbox border border-gray-500"
                                 {{ old('remember') ? 'checked' : '' }}>
                             <span class="ml-2">{{ __('Remember Me') }}</span>
                         </label>

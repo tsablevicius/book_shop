@@ -19,7 +19,7 @@
                             {{ __('Name') }}:
                         </label>
 
-                        <input id="name" type="text" class="form-input w-full @error('name')  border-red-500 @enderror"
+                        <input id="name" type="text" class="form-input w-full border border-gray-500 @error('name')  border-red-500 @enderror"
                             name="name" value="{{ old('name') }}" required autocomplete="name" autofocus>
 
                         @error('name')
@@ -35,10 +35,25 @@
                         </label>
 
                         <input id="email" type="email"
-                            class="form-input w-full @error('email') border-red-500 @enderror" name="email"
+                            class="form-input w-full border border-gray-500 @error('email') border-red-500 border border-gray-500 @enderror" name="email"
                             value="{{ old('email') }}" required autocomplete="email">
 
                         @error('email')
+                        <p class="text-red-500 text-xs italic mt-4">
+                            {{ $message }}
+                        </p>
+                        @enderror
+                    </div>
+
+                    <div class="flex flex-wrap">
+                        <label for="birthday" class="block text-gray-700 text-sm font-bold mb-2 sm:mb-4">
+                            {{ __('Birthday') }}:
+                        </label>
+
+                        <input id="birthday" type="text" class="form-input w-full border border-gray-500 @error('birthday')  border-red-500 @enderror"
+                               name="birthday" value="{{ old('birthday') }}" required autocomplete="name" autofocus>
+
+                        @error('birthday')
                         <p class="text-red-500 text-xs italic mt-4">
                             {{ $message }}
                         </p>
@@ -51,7 +66,7 @@
                         </label>
 
                         <input id="password" type="password"
-                            class="form-input w-full @error('password') border-red-500 @enderror" name="password"
+                            class="form-input w-full border border-gray-500 @error('password') border-red-500 border border-gray-500 @enderror" name="password"
                             required autocomplete="new-password">
 
                         @error('password')
@@ -66,7 +81,7 @@
                             {{ __('Confirm Password') }}:
                         </label>
 
-                        <input id="password-confirm" type="password" class="form-input w-full"
+                        <input id="password-confirm" type="password" class="form-input w-full border border-gray-500"
                             name="password_confirmation" required autocomplete="new-password">
                     </div>
 
