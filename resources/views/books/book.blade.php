@@ -4,19 +4,30 @@
         <div class="container px-5 py-6 flex">
             <div class="ml-4 w-1/3">
                 <div class="flex justify-center">
-                    <img  class="w-4/5" src="{{ $book->cover_img_path }}" alt="book_cover">
+                    <img src="{{asset('storage/cover_images/' . $book->cover_img_path)}}" alt="cover" />
                 </div>
             </div>
-            <div class="w-2/3">
+            <div class="w-2/3 pl-10">
                 <h2 class="text-2xl text-gray-900 font-medium title-font mb-2">
                     {{ $book->title }}
                 </h2>
                 <hr>
                 <p class="text-base text-gray-900 font-medium title-font my-2">
-                    {{ $book->author }}, {{ $book->year }}
+                    @foreach($book->authors as $author)
+                        <span> {{$author->author}}</span>
+                        @if(!$loop->last)
+                            <span>, </span>
+                        @endif()
+                    @endforeach
+                    <span>, {{ $book->year }}</span>
                 </p>
                 <p class="leading-relaxed text-base mt-2">
-                    {{ $book->genre }}
+                    @foreach($book->genres as $genre)
+                        <span> {{$genre->genre}}</span>
+                        @if(!$loop->last)
+                            <span>, </span>
+                        @endif()
+                    @endforeach
                 </p>
                 <p class="leading-relaxed text-base mt-8">
                     {{ $book->description }}

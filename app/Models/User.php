@@ -12,6 +12,9 @@ class User extends Authenticatable
 {
     use HasFactory, Notifiable, SoftDeletes;
 
+    const ROLE_ADMIN = 1;
+    const ROLE_USER = 2;
+
     protected $fillable = [
         'name',
         'email',
@@ -38,6 +41,6 @@ class User extends Authenticatable
 
     public function isAdmin()
     {
-        return auth()->user()->role->id === 1;
+        return auth()->user()->role->id === self::ROLE_ADMIN;
     }
 }

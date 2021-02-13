@@ -48,6 +48,8 @@ class BookController extends Controller
 
     public function edit(Book $book)
     {
+        $book = $this->bookRepository->addRelatedData($book);
+
         return view('books.form', compact('book'));
     }
 

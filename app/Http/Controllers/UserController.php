@@ -27,7 +27,7 @@ class UserController extends Controller
 
     public function adminWithAllBooks()
     {
-        $books = $this->bookRepository->all();
+        $books = $this->bookRepository->getAllBooks();
 
         return view('users.admin-books', compact('books'));
     }

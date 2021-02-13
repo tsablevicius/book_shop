@@ -2,7 +2,9 @@
 
 namespace App\Services;
 
+use App\Repositories\AuthorRepository;
 use App\Repositories\BookRepository;
+use App\Repositories\GenreRepository;
 use Carbon\Carbon;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
@@ -10,10 +12,18 @@ use Illuminate\Support\Collection;
 class BookService
 {
     private $bookRepository;
+    private $authorRepository;
+    private $genreRepository;
 
-    public function __construct(BookRepository $bookRepository)
+    public function __construct(
+        BookRepository $bookRepository,
+        AuthorRepository $authorRepository,
+        GenreRepository $genreRepository
+    )
     {
         $this->bookRepository = $bookRepository;
+        $this->authorRepository = $authorRepository;
+        $this->genreRepository = $genreRepository;
     }
 
     public function getBooks(): Collection
@@ -33,21 +43,50 @@ class BookService
 
     public function create($data)
     {
+        //TODO add into transaction
         $coverName = $this->handleFileUpload(Arr::get($data, 'cover_img_path'));
-
         $data['cover_img_path'] = $coverName;
         $data['user_id'] = auth()->user()->id;
 
-        return $this->bookRepository->create($data);
+        $book = $this->bookRepository->create($data);
+
+        $authors = explode(',', Arr::get($data, 'author'));
+        collect($authors)->each(function ($author) use ($book) {
+            $author = $this->authorRepository->createIfNotExist(['author' => trim($author)]);
+            $book->authors()->attach($author);
+        });
+
+        $genres = explode(',', Arr::get($data, 'genre'));
+        collect($genres)->each(function ($genre) use ($book) {
+            $genre = $this->genreRepository->createIfNotExist(['genre' => trim($genre)]);
+            $book->genres()->attach($genre);
+        });
+
+        return $book;
     }
 
     public function update($data, $id)
     {
+        //TODO add into transaction
         $coverName = $this->handleFileUpload(Arr::get($data, 'cover_img_path'));
         $data['cover_img_path'] = $coverName;
 
-        return $this->bookRepository->update($data, $id);
+        $isUpdated = $this->bookRepository->update($data, $id);
+        $book = $this->bookRepository->find($id);
 
+        $authors = explode(',', Arr::get($data, 'author'));
+        collect($authors)->each(function ($author) use ($book) {
+            $author = $this->authorRepository->createIfNotExist(['author' => trim($author)]);
+            $book->authors()->sync($author);
+        });
+
+        $genres = explode(',', Arr::get($data, 'genre'));
+        collect($genres)->each(function ($genre) use ($book) {
+            $genre = $this->genreRepository->createIfNotExist(['genre' => trim($genre)]);
+            $book->genres()->sync($genre);
+        });
+
+        return $isUpdated;
     }
 
     private function handleFileUpload($file)

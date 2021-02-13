@@ -16,8 +16,6 @@ class Book extends Model
     protected $fillable = [
         'title',
         'description',
-        'author',
-        'genre',
         'price',
         'discount',
         'year',
@@ -30,4 +28,17 @@ class Book extends Model
     {
         $this->belongsTo(User::class);
     }
+
+    public function authors()
+    {
+        return $this->belongsToMany(Author::class)
+            ->withTimestamps();
+    }
+
+    public function genres()
+    {
+        return $this->belongsToMany(Genre::class)
+            ->withTimestamps();
+    }
+
 }

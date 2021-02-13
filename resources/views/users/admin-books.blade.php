@@ -48,10 +48,24 @@
                                             </div>
                                         </td>
                                         <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
-                                            <div class="text-sm leading-5 text-gray-900">{{$book->author}}</div>
+                                            <div class="text-sm leading-5 text-gray-900">
+                                                @foreach($book->authors as $author)
+                                                    <span> {{$author->author}}</span>
+                                                    @if(!$loop->last)
+                                                        <span>, </span>
+                                                    @endif()
+                                                @endforeach
+                                            </div>
                                         </td>
                                         <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
-                                            <div class="text-sm leading-5 text-gray-900">{{$book->genre}}</div>
+                                            <div class="text-sm leading-5 text-gray-900">
+                                                @foreach($book->genres as $genre)
+                                                    <span> {{$genre->genre}}</span>
+                                                    @if(!$loop->last)
+                                                        <span>, </span>
+                                                    @endif()
+                                                @endforeach
+                                            </div>
                                         </td>
                                         <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200 text-sm leading-5 text-gray-500">
                                             <div class="text-sm leading-5 text-gray-900">{{$book->price}}</div>

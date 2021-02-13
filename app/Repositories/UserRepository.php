@@ -14,6 +14,11 @@ class UserRepository extends BaseRepository
 
     public function getUserWithBooks($userId): Collection
     {
-        return $this->model::with('books')->where('id', $userId)->get();
+        return $this->model::with(['books', 'books.authors', 'books.genres'])->where('id', $userId)->get();
+    }
+
+    public function getAllUserWithBooks(): Collection
+    {
+        return $this->model::with(['books', 'books.authors', 'books.genres'])->get();
     }
 }

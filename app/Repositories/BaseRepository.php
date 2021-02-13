@@ -35,4 +35,9 @@ abstract class BaseRepository
     {
         return $this->model::find($id)->update($data);
     }
+
+    public function createIfNotExist($data)
+    {
+        return $this->model::firstOrCreate($data);
+    }
 }
