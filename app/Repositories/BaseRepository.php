@@ -18,7 +18,7 @@ abstract class BaseRepository
 
     public function find($id)
     {
-        return $this->model::find($id)->first();
+        return $this->model::find(($id));
     }
 
     public function delete($id)

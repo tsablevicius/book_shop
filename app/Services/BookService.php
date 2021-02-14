@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Repositories\AuthorRepository;
 use App\Repositories\BookRepository;
 use App\Repositories\GenreRepository;
+use App\Repositories\UserRepository;
 use Carbon\Carbon;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
@@ -39,6 +40,18 @@ class BookService
 
             return $book;
         });
+    }
+
+    public function getBook($id)
+    {
+        $book = $this->bookRepository->findConfirmedBook($id);
+
+        $book['book_rating'] = $book->reviews->avg('rating');
+        $book->reviews->map(function (&$review) {
+           $review['author_name'] = $review->user->name;
+        });
+
+        return $book;
     }
 
     public function create($data)

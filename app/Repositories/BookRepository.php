@@ -4,7 +4,6 @@ namespace App\Repositories;
 
 use App\Models\Book;
 use Carbon\Carbon;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 
 class BookRepository extends BaseRepository
@@ -21,7 +20,7 @@ class BookRepository extends BaseRepository
 
     public function findConfirmedBook(int $id)
     {
-        return $this->model::with(['authors:author', 'genres:genre'])->whereNotNull('is_confirmed')->findOrfail($id);
+        return $this->model::with(['authors:author', 'genres:genre', 'reviews'])->whereNotNull('is_confirmed')->findOrfail($id);
     }
 
     public function confirm($id)

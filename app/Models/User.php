@@ -39,6 +39,11 @@ class User extends Authenticatable
         return $this->hasMany(Book::class);
     }
 
+    public function reviews()
+    {
+        return $this->hasMany(Review::class);
+    }
+
     public function isAdmin()
     {
         return auth()->user()->role->id === self::ROLE_ADMIN;

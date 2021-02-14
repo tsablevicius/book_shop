@@ -41,7 +41,7 @@ class BookController extends Controller
 
     public function show(Book $book)
     {
-        $book = $this->bookRepository->findConfirmedBook($book->id);
+        $book = $this->bookService->getBook($book->id);
 
         return view('books.book', compact('book'));
     }
