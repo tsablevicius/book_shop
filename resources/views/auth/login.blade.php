@@ -29,14 +29,23 @@
                         @enderror
                     </div>
 
-                    <div class="flex flex-wrap">
+                    <div class="">
                         <label for="password" class="block text-gray-700 text-sm font-bold mb-2 sm:mb-4">
                             {{ __('Password') }}:
                         </label>
 
-                        <input id="password" type="password"
-                            class="form-input w-full border border-gray-500 @error('password') border-red-500 @enderror" name="password"
-                            required>
+                        <div class="flex justify-between">
+                            <input id="password" type="password"
+                                class="w-full form-input border border-gray-500 @error('password') border-red-500 @enderror" name="password"
+                                required>
+
+                            <span class="inline-flex justify-end items-center ml-2" onclick="showPassword()">
+                                <svg id="eye-on" class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                </svg>
+                            </span>
+                        </div>
 
                         @error('password')
                         <p class="text-red-500 text-xs italic mt-4">
@@ -82,3 +91,10 @@
     </div>
 </main>
 @endsection
+
+<script type="text/javascript">
+    function showPassword() {
+        let passwordInput = document.getElementById("password");
+        passwordInput.type === "password" ? passwordInput.type = "text" : passwordInput.type = "password";
+    }
+</script>

@@ -18,12 +18,14 @@ Route::get('/profile', [UserController::class, 'profile'])->name('profile');
 Route::resource('books', BookController::class);
 Route::post('confirm', [BookController::class, 'confirm'])->name('books.confirm');
 
-Route::resource('reviews', ReviewController::class);
-
+Route::post('/reviews', [ReviewController::class, 'store']);
 
 Route::group(['prefix' => 'admin'], function () {
     Route::get('/books', [UserController::class, 'adminWithAllBooks'])->name('admin.books');
 });
+
+Route::get('/email-edit', [UserController::class, 'editEmail'])->name('users.email-edit');
+Route::post('/update-email', [UserController::class, 'updateEmail'])->name('users.email-update');
 
 Route::get('/home', [HomeController::class, 'index'])->name('home');
 

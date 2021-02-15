@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\UpdateEmailRequest;
 use App\Models\User;
 use App\Repositories\BookRepository;
 use App\Repositories\UserRepository;
@@ -30,5 +31,17 @@ class UserController extends Controller
         $books = $this->bookRepository->getAllBooks();
 
         return view('users.admin-books', compact('books'));
+    }
+
+    public function editEmail()
+    {
+        return view('auth.update-email');
+    }
+
+    public function updateEmail(UpdateEmailRequest $request)
+    {
+        $this->userRepository->update(['email' => $request->input('email')], auth()->user()->id);
+
+        return redirect()->route('profile');
     }
 }
