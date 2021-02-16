@@ -62,7 +62,7 @@
             </p>
             @enderror
 
-            <input id="price" type="number"
+            <input id="price" type="text"
                    class="mt-4 form-input w-full border border-gray-500 @error('price') border-red-500 @enderror"
                    name="price"
                    value="{{ isset($book) ? $book->price : old('price') }}"
@@ -75,10 +75,11 @@
             @enderror
 
             <input id="discount" type="number"
-                   class="mt-4 form-input w-full border border-gray-500 @error('discount') border-red-500 @enderror"
-                   name="discount"
-                   value="{{ isset($book) ? $book->discount : old('discount') }}"
-                   placeholder="Discount">
+                class="mt-4 form-input w-full border border-gray-500 @error('discount') border-red-500 @enderror"
+                name="discount"
+                value="{{ isset($book) ? $book->discount : old('discount') }}"
+                placeholder="Discount"
+                step="0.01">
             @error('discount')
             <p class="text-red-500 text-xs italic mt-2">
                 {{ $message }}

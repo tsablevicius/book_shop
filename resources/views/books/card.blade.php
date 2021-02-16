@@ -16,7 +16,7 @@
             <img src="{{asset('storage/cover_images/' . $book->cover_img_path)}}" alt="cover" />
         </div>
         <div class="px-4 py-2 mt-2 bg-white">
-            <h2 class="font-bold text-2xl text-gray-800">{{ $book->title }}</h2>
+            <h2 class="font-bold text-lg text-gray-800">{{ $book->title }}</h2>
             <p class="text text-gray-700 my-3">
                 @foreach($book->authors as $author)
                     <span> {{$author->author}}</span>

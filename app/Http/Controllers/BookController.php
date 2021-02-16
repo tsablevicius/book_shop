@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\BookCreateRequest;
 use App\Http\Requests\BookRequest;
+use App\Http\Requests\SearchRequest;
 use App\Models\Book;
 use App\Repositories\BookRepository;
 use App\Services\BookService;
@@ -72,5 +73,12 @@ class BookController extends Controller
         $this->bookRepository->confirm((int)$request->input('id'));
 
         return redirect()->route('profile');
+    }
+
+    public function search(SearchRequest $request)
+    {
+        $books = $this->bookService->getBooks($request->input('search'));
+
+        return view('books.index', compact('books'));
     }
 }

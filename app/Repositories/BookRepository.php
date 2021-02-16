@@ -13,9 +13,19 @@ class BookRepository extends BaseRepository
         $this->model = Book::class;
     }
 
-    public function confirmedBooks(): Collection
+    public function confirmedBooks($search): Collection
     {
-        return $this->model::with(['authors:author', 'genres:genre'])->whereNotNull('is_confirmed')->get();
+        $query = $this->model::with(['authors:author', 'genres:genre'])
+            ->whereNotNull('is_confirmed');
+
+        if ($search) {
+            $query->where('title', 'LIKE', "{$search}%")
+                ->orWhereHas('authors', function ($query) use ($search) {
+                    $query->where('author',  'LIKE', "{$search}%");
+                });
+        }
+
+        return $query->get();
     }
 
     public function findConfirmedBook(int $id)

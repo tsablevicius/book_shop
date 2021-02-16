@@ -27,9 +27,9 @@ class BookService
         $this->genreRepository = $genreRepository;
     }
 
-    public function getBooks(): Collection
+    public function getBooks($search = null): Collection
     {
-        return $this->bookRepository->confirmedBooks()->map(function ($book) {
+        return $this->bookRepository->confirmedBooks($search)->map(function ($book) {
             if ($discount = Arr::get($book, 'discount')) {
                 $book['price_with_discount'] = round($book['price'] - ($book['price'] * $discount / 100), 2);
             }

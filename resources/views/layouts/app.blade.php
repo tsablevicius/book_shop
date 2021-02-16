@@ -20,10 +20,11 @@
     <div id="app">
         <header class="bg-blue-900 py-3">
             <div class="container mx-auto flex justify-between items-center px-6">
-                <div>
-                    <a href="{{ url('/') }}" class="text-lg font-semibold text-gray-100 no-underline">
+                <div class="flex">
+                    <a href="{{ url('/') }}" class="text-lg font-semibold text-gray-100 no-underline mt-2">
                         {{ config('app.name', 'Laravel') }}
                     </a>
+                    @include('components.search')
                 </div>
                 <nav class="space-x-4 text-gray-300 text-sm sm:text-base">
                     @guest
