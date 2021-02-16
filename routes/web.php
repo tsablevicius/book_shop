@@ -17,8 +17,9 @@ Route::get('/profile', [UserController::class, 'profile'])->name('profile');
 
 Route::resource('books', BookController::class);
 Route::post('confirm', [BookController::class, 'confirm'])->name('books.confirm');
+Route::post('search', [BookController::class, 'search'])->name('books.search');
 
-Route::post('/reviews', [ReviewController::class, 'store']);
+Route::post('/reviews', [ReviewController::class, 'store'])->name('reviews.store');
 
 Route::group(['prefix' => 'admin'], function () {
     Route::get('/books', [UserController::class, 'adminWithAllBooks'])->name('admin.books');
