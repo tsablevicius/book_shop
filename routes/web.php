@@ -13,20 +13,27 @@ Route::get('/', function () {
 });
 
 Auth::routes();
-Route::get('/profile', [UserController::class, 'profile'])->name('profile');
 
 Route::resource('books', BookController::class);
-Route::post('confirm', [BookController::class, 'confirm'])->name('books.confirm');
 Route::post('search', [BookController::class, 'search'])->name('books.search');
 
-Route::post('/reviews', [ReviewController::class, 'store'])->name('reviews.store');
+Route::group(['middleware' => 'auth'], function () {
+    Route::get('/profile', [UserController::class, 'profile'])->name('profile');
 
-Route::group(['prefix' => 'admin'], function () {
-    Route::get('/books', [UserController::class, 'adminWithAllBooks'])->name('admin.books');
+    Route::post('confirm', [BookController::class, 'confirm'])->name('books.confirm')->middleware('admin');
+    Route::get('create-report/{book}', [BookController::class, 'createReport'])->name('books.create-report');
+    Route::post('send-report', [BookController::class, 'sendReport'])->name('books.send-report');
+
+    Route::post('/reviews', [ReviewController::class, 'store'])->name('reviews.store');
+
+    Route::group(['prefix' => 'admin', 'middleware' => 'admin'], function () {
+        Route::get('/books', [UserController::class, 'adminWithAllBooks'])->name('admin.books');
+    });
+
+    Route::get('/edit-email', [UserController::class, 'editEmail'])->name('users.email-edit');
+    Route::post('/update-email', [UserController::class, 'updateEmail'])->name('users.email-update');
+
+    Route::get('/home', [HomeController::class, 'index'])->name('home');
 });
 
-Route::get('/email-edit', [UserController::class, 'editEmail'])->name('users.email-edit');
-Route::post('/update-email', [UserController::class, 'updateEmail'])->name('users.email-update');
-
-Route::get('/home', [HomeController::class, 'index'])->name('home');
 

@@ -3,8 +3,16 @@
     <section class="text-gray-600 body-font">
         <div class="px-5 py-6 flex">
             <div class="ml-4 w-1/3">
-                <div class="flex justify-center">
+                <div class="flex flex-col justify-center">
                     <img src="{{asset('storage/cover_images/' . $book->cover_img_path)}}" alt="cover" />
+                    @auth()
+                        <div class="flex">
+                            <a href="{{route('books.create-report', $book)}}"
+                               class="mt-4 px-4 pt-3 h-10 bg-gray-200 hover:bg-indigo-700 hover:text-white border border-indigo-700 text-indigo-700 uppercase">
+                                <span>Report</span>
+                            </a>
+                        </div>
+                    @endauth
                 </div>
             </div>
             <div class="w-2/3 pl-10">
@@ -14,7 +22,7 @@
                     </h2>
                     <div>
                         <span class="mr-2">Rating:</span>
-                        @include('books.rating', ['rating' => $book->book_rating])
+                        @include('components.rating', ['rating' => $book->book_rating])
                     </div>
                 </div>
                 <hr>
@@ -48,7 +56,7 @@
                                 </div>
                                 @if($review->rating)
                                     <div>
-                                        @include('books.rating', ['rating' => $review->rating])
+                                        @include('components.rating', ['rating' => $review->rating])
                                     </div>
                                 @endif
                             </div>
@@ -59,10 +67,12 @@
                         </div>
                     @endforeach
                 </div>
-                <div class="w-full md:mt-4 mt-6">
-                    <h2 class="text-lg text-gray-900 font-medium title-font mt-4">Add review</h2>
-                    @include('books.review', ['book' => $book])
-                </div>
+                @auth()
+                    <div class="w-full md:mt-4 mt-6">
+                        <h2 class="text-lg text-gray-900 font-medium title-font mt-4">Add review</h2>
+                        @include('components.review', ['book' => $book])
+                    </div>
+                @endauth
             </div>
         </div>
     </section>

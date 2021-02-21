@@ -2,13 +2,17 @@
 
 namespace App\Services;
 
+use App\Http\Middleware\PreventRequestsDuringMaintenance;
+use App\Models\User;
+use App\Notifications\BookReportNotification;
 use App\Repositories\AuthorRepository;
 use App\Repositories\BookRepository;
 use App\Repositories\GenreRepository;
-use App\Repositories\UserRepository;
 use Carbon\Carbon;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Notification;
 
 class BookService
 {
@@ -27,9 +31,11 @@ class BookService
         $this->genreRepository = $genreRepository;
     }
 
-    public function getBooks($search = null): Collection
+    public function getBooks($search = null)
     {
-        return $this->bookRepository->confirmedBooks($search)->map(function ($book) {
+        $books = $this->bookRepository->confirmedBooks($search);
+
+        collect($books->items())->map(function ($book) {
             if ($discount = Arr::get($book, 'discount')) {
                 $book['price_with_discount'] = round($book['price'] - ($book['price'] * $discount / 100), 2);
             }
@@ -40,11 +46,17 @@ class BookService
 
             return $book;
         });
+
+        return $books;
     }
 
-    public function getBook($id)
+    public function getBook($book)
     {
-        $book = $this->bookRepository->findConfirmedBook($id);
+        if (auth()->user()->isOwner($book)) {
+            $book = $this->bookRepository->find($book->id);
+        } else {
+            $book = $this->bookRepository->findConfirmedBook($book->id);
+        }
 
         $book['book_rating'] = $book->reviews->avg('rating');
         $book->reviews->map(function (&$review) {
@@ -56,50 +68,67 @@ class BookService
 
     public function create($data)
     {
-        //TODO add into transaction
-        $coverName = $this->handleFileUpload(Arr::get($data, 'cover_img_path'));
-        $data['cover_img_path'] = $coverName;
-        $data['user_id'] = auth()->user()->id;
+        $book = null;
 
-        $book = $this->bookRepository->create($data);
+        DB::transaction( function () use ($data, &$book) {
+            $coverName = $this->handleFileUpload(Arr::get($data, 'cover_img_path'));
+            $data['cover_img_path'] = $coverName;
+            $data['user_id'] = auth()->user()->id;
 
-        $authors = explode(',', Arr::get($data, 'author'));
-        collect($authors)->each(function ($author) use ($book) {
-            $author = $this->authorRepository->createIfNotExist(['author' => trim($author)]);
-            $book->authors()->attach($author);
+            $book = $this->bookRepository->create($data);
+
+            $authors = explode(',', Arr::get($data, 'author'));
+            collect($authors)->each(function ($author) use ($book) {
+                $author = $this->authorRepository->createIfNotExist(['author' => trim($author)]);
+                $book->authors()->attach($author);
+            });
+
+            $genres = explode(',', Arr::get($data, 'genre'));
+            collect($genres)->each(function ($genre) use ($book) {
+                $genre = $this->genreRepository->createIfNotExist(['genre' => trim($genre)]);
+                $book->genres()->attach($genre);
+            });
         });
 
-        $genres = explode(',', Arr::get($data, 'genre'));
-        collect($genres)->each(function ($genre) use ($book) {
-            $genre = $this->genreRepository->createIfNotExist(['genre' => trim($genre)]);
-            $book->genres()->attach($genre);
-        });
 
         return $book;
     }
 
     public function update($data, $id)
     {
-        //TODO add into transaction
-        $coverName = $this->handleFileUpload(Arr::get($data, 'cover_img_path'));
-        $data['cover_img_path'] = $coverName;
+        $isUpdated = false;
 
-        $isUpdated = $this->bookRepository->update($data, $id);
-        $book = $this->bookRepository->find($id);
+        DB::transaction( function () use ($data, $id, &$isUpdated) {
+            $coverName = $this->handleFileUpload(Arr::get($data, 'cover_img_path'));
+            $data['cover_img_path'] = $coverName;
 
-        $authors = explode(',', Arr::get($data, 'author'));
-        collect($authors)->each(function ($author) use ($book) {
-            $author = $this->authorRepository->createIfNotExist(['author' => trim($author)]);
-            $book->authors()->sync($author);
-        });
+            $isUpdated = $this->bookRepository->update($data, $id);
+            $book = $this->bookRepository->find($id);
 
-        $genres = explode(',', Arr::get($data, 'genre'));
-        collect($genres)->each(function ($genre) use ($book) {
-            $genre = $this->genreRepository->createIfNotExist(['genre' => trim($genre)]);
-            $book->genres()->sync($genre);
+            $authors = explode(',', Arr::get($data, 'author'));
+            collect($authors)->each(function ($author) use ($book) {
+                $author = $this->authorRepository->createIfNotExist(['author' => trim($author)]);
+                $book->authors()->sync($author);
+            });
+
+            $genres = explode(',', Arr::get($data, 'genre'));
+            collect($genres)->each(function ($genre) use ($book) {
+                $genre = $this->genreRepository->createIfNotExist(['genre' => trim($genre)]);
+                $book->genres()->sync($genre);
+            });
+
         });
 
         return $isUpdated;
+    }
+
+    public function sendEmail($data)
+    {
+        $admin = User::where('role_id', User::ROLE_ADMIN)->get();
+        $book = $this->bookRepository->find($data['book_id']);
+        Notification::send($admin, new BookReportNotification($book, $data));
+
+        return $book;
     }
 
     private function handleFileUpload($file)

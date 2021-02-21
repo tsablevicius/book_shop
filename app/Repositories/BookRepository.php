@@ -4,7 +4,6 @@ namespace App\Repositories;
 
 use App\Models\Book;
 use Carbon\Carbon;
-use Illuminate\Support\Collection;
 
 class BookRepository extends BaseRepository
 {
@@ -13,7 +12,7 @@ class BookRepository extends BaseRepository
         $this->model = Book::class;
     }
 
-    public function confirmedBooks($search): Collection
+    public function confirmedBooks($search = null)
     {
         $query = $this->model::with(['authors:author', 'genres:genre'])
             ->whereNotNull('is_confirmed');
@@ -25,7 +24,7 @@ class BookRepository extends BaseRepository
                 });
         }
 
-        return $query->get();
+        return $query->simplePaginate(25);
     }
 
     public function findConfirmedBook(int $id)

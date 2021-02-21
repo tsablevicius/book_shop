@@ -4,11 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\BookCreateRequest;
 use App\Http\Requests\BookRequest;
+use App\Http\Requests\ReportBook;
 use App\Http\Requests\SearchRequest;
 use App\Models\Book;
 use App\Repositories\BookRepository;
 use App\Services\BookService;
-use Illuminate\Http\Request;
 
 class BookController extends Controller
 {
@@ -17,6 +17,7 @@ class BookController extends Controller
 
     public function __construct(BookService $bookService, BookRepository $bookRepository)
     {
+        $this->middleware('auth')->except('index', 'show', 'search');
         $this->bookService = $bookService;
         $this->bookRepository = $bookRepository;
     }
@@ -42,7 +43,7 @@ class BookController extends Controller
 
     public function show(Book $book)
     {
-        $book = $this->bookService->getBook($book->id);
+        $book = $this->bookService->getBook($book);
 
         return view('books.book', compact('book'));
     }
@@ -80,5 +81,17 @@ class BookController extends Controller
         $books = $this->bookService->getBooks($request->input('search'));
 
         return view('books.index', compact('books'));
+    }
+
+    public function createReport(Book $book)
+    {
+        return view('books.report-form', compact('book'));
+    }
+
+    public function sendReport(ReportBook $request)
+    {
+        $book = $this->bookService->sendEmail($request->validated());
+
+        return redirect()->route('books.show', ['book' => $book]);
     }
 }

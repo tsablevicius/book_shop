@@ -48,4 +48,9 @@ class User extends Authenticatable
     {
         return auth()->user()->role->id === self::ROLE_ADMIN;
     }
+
+    public function isOwner($book)
+    {
+        return auth()->user()->id === $book->user_id;
+     }
 }

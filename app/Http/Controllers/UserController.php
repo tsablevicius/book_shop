@@ -3,10 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\UpdateEmailRequest;
-use App\Models\User;
 use App\Repositories\BookRepository;
 use App\Repositories\UserRepository;
-use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
@@ -15,6 +13,7 @@ class UserController extends Controller
 
     public function __construct(UserRepository $userRepository, BookRepository $bookRepository)
     {
+        $this->middleware('auth');
         $this->userRepository = $userRepository;
         $this->bookRepository = $bookRepository;
     }
