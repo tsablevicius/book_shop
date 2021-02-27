@@ -52,11 +52,7 @@ class BookService
 
     public function getBook($book)
     {
-        if (auth()->user()->isOwner($book)) {
-            $book = $this->bookRepository->find($book->id);
-        } else {
-            $book = $this->bookRepository->findConfirmedBook($book->id);
-        }
+        $book = $this->bookRepository->findConfirmedBook($book->id);
 
         $book['book_rating'] = $book->reviews->avg('rating');
         $book->reviews->map(function (&$review) {
