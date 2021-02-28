@@ -3,10 +3,9 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\Api\Book\BookCollectionResource;
 use App\Http\Resources\Api\Book\BookResource;
+use App\Http\Resources\ReviewResource;
 use App\Services\BookService;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class BookController extends Controller
@@ -20,12 +19,18 @@ class BookController extends Controller
 
     public function getBooks()
     {
-        return BookCollectionResource::collection($this->bookService->getBooks());
+        return BookResource::collection($this->bookService->getBooks());
     }
 
     public function getBook($id)
     {
         $book = (object)['id' => $id];
-        return BookResource::make($this->bookService->getBook($book));
+        return BookResource::make($this->bookService->getBook($book)->append('description'));
+    }
+
+    public function getReviews($id)
+    {
+        $book = (object)['id' => $id];
+        return ReviewResource::make($this->bookService->getBook($book));
     }
 }

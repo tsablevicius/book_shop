@@ -8,18 +8,16 @@ class BookResource extends JsonResource
 {
     public function toArray($request): array
     {
+        $price = $this->discount ? $this->price_with_discount : $this->price;
+
         return [
             'id' => $this->id,
             'title' => $this->title,
-            'description' => $this->description,
-            'year' => $this->year,
-            'price' => $this->price,
-            'discount' => $this->discount,
-            'coverImg' => $this->cover_img_path,
-            'confirmedDate' => $this->is_confirmed,
-            'priceWithDoscount' => $this->price_with_discount,
+            'price' => $price,
+            'coverImg' => public_path('storage/cover_images/' . $this->cover_img_path),
             'authors' => $this->authors[0]->author,
             'genres' => $this->genres[0]->genre,
+            'description' => $this->whenAppended('description', $this->description)
         ];
     }
 }

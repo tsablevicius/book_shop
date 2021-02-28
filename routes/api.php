@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\API\BookController;
+use App\Http\Controllers\API\ReviewController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -22,4 +23,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 Route::prefix('v1')->group(function () {
     Route::get('books', [BookController::class, 'getBooks']);
     Route::get('books/{id}', [BookController::class, 'getBook']);
+
+    Route::get('books/{id}/reviews', [BookController::class, 'getReviews']);
+    Route::post('books/reviews/create', [ReviewController::class, 'store']);
 });
