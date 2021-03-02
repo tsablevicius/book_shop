@@ -46,7 +46,7 @@
                 <p class="leading-relaxed text-base mt-8">
                     {{ $book->description }}
                 </p>
-                <review :id="{{ $book->id }}" :logged="{{Auth::check() ? 1 : 0}}"/>
+                <review :id="{{ $book->id }}" :logged="{{Auth::check() ? 1 : 0}}"></review>
             </div>
         </div>
     </section>
